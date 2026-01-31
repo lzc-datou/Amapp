@@ -156,7 +156,7 @@ def view_model(model_path):
         return False
 
 if __name__ == "__main__":
-    setup_encoding()
+    # setup_encoding()
     
     if not check_dependencies():
         sys.exit(1)

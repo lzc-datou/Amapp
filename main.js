@@ -182,7 +182,7 @@ ipcMain.handle('open-model-viewer', async (event, modelPath) => {
             pythonProcess.stdout.on('data', (data) => {
                 const text = data.toString();
                 output += text;
-                console.log('Python output:', text.trim());
+                console.log('Python output:\n', text.trim());
             });
 
             pythonProcess.stderr.on('data', (data) => {
@@ -207,10 +207,10 @@ ipcMain.handle('open-model-viewer', async (event, modelPath) => {
 
             // 添加进程错误处理
             pythonProcess.on('error', (error) => {
-                console.error('Python进程启动失败:', error);
+                console.error('Python Process startup failed:', error);
                 resolve({ 
                     success: false, 
-                    error: `无法启动Python进程: ${error.message}` 
+                    error: `Cannot  start python process: ${error.message}` 
                 });
             });
 
@@ -285,7 +285,7 @@ ipcMain.handle('export-data', async (event) => {
                 'utf8'
             );
             
-            console.log('数据已成功导出到:', filePath);
+            console.log('Data exported successfully to:', filePath);
             
             return { 
                 success: true, 
