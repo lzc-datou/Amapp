@@ -1,0 +1,367 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    background: #f5f5f5;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 控制面板样式 */
+#control-panel {
+    background: #2c3e50;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+#control-panel h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #229954;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #3498db;
+    color: #3498db;
+}
+
+.btn-outline:hover {
+    background: #3498db;
+    color: white;
+}
+
+/* 地图容器样式 */
+#map-container {
+    flex: 1;
+    position: relative;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 8px;
+    width: 500px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.modal-content.large {
+    width: 800px;
+}
+
+.modal-header {
+    padding: 15px 20px;
+    background: #34495e;
+    color: white;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: white;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    height: 80px;
+    resize: vertical;
+}
+
+.file-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.file-input-group input {
+    flex: 1;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* 表格样式 */
+#crack-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#crack-table th,
+#crack-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#crack-table th {
+    background: #34495e;
+    color: white;
+}
+
+#crack-table tr:hover {
+    background: #f5f5f5;
+}
+
+/* 自定义标记点样式 */
+.amap-marker {
+    cursor: pointer;
+}
+
+.custom-marker {
+    background: #e74c3c;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* 信息窗口样式 */
+.info-window {
+    padding: 10px;
+    min-width: 200px;
+}
+
+.info-window h4 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+}
+
+.info-window p {
+    margin: 5px 0;
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.info-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    #control-panel {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    .button-group {
+        flex-wrap: wrap;
+    }
+}
+/* 裂缝列表模态框样式修复 */
+#crack-list-modal .modal-content.large {
+    width: 900px;
+    max-height: 80vh; /* 限制最大高度为视口的80% */
+    display: flex;
+    flex-direction: column;
+}
+
+#crack-list {
+    max-height: 60vh; /* 限制列表区域高度 */
+    overflow: auto; /* 添加滚动条 */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* 表格容器滚动条样式 */
+#crack-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+/* 表格头部固定 */
+#crack-table thead {
+    position: sticky;
+    top: 0;
+    background: #34495e;
+    z-index: 10;
+}
+
+/* 表格样式优化 */
+#crack-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+#crack-table th {
+    position: sticky;
+    top: 0;
+    background: #34495e;
+    color: white;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    z-index: 20;
+}
+
+#crack-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+#crack-table tr:hover {
+    background: #f8f9fa;
+}
+
+/* 操作按钮样式 */
+#crack-table .btn {
+    padding: 4px 8px;
+    margin: 2px;
+    font-size: 12px;
+}
+
+/* 模态框内容区域滚动 */
+.modal-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    #crack-list-modal .modal-content.large {
+        width: 95%;
+        height: 90vh;
+    }
+    
+    #crack-table-container {
+        max-height: 60vh;
+    }
+    
+    #crack-table {
+        font-size: 12px;
+    }
+    
+    #crack-table .btn {
+        padding: 3px 6px;
+        font-size: 11px;
+    }
+}

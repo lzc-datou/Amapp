@@ -1,0 +1,209 @@
+[
+  {
+    "id": "1769760831723",
+    "name": "分支裂缝-002",
+    "longitude": 116.39812,
+    "latitude": 39.90985,
+    "modelPath": "C:\\Users\\16202\\Desktop\\DesktopFiles\\electron\\Amapp\\crack_model\\crack_model.glb",
+    "description": "北部延伸分支，轻微下沉",
+    "createdAt": "2026-01-30T08:05:00.000Z"
+  },
+  {
+    "id": "1769760831724",
+    "name": "交叉裂缝-003",
+    "longitude": 116.39655,
+    "latitude": 39.90876,
+    "modelPath": "C:\\models\\crack_003.glb",
+    "description": "与主裂缝交叉，深度较深",
+    "createdAt": "2026-01-30T08:10:00.000Z"
+  },
+  {
+    "id": "1769760831725",
+    "name": "表面裂缝-004",
+    "longitude": 116.39921,
+    "latitude": 39.91012,
+    "modelPath": "C:\\models\\crack_004.glb",
+    "description": "表面浅层裂缝，长度约2m",
+    "createdAt": "2026-01-30T08:15:00.000Z"
+  },
+  {
+    "id": "1769760831726",
+    "name": "扩展裂缝-005",
+    "longitude": 116.39588,
+    "latitude": 39.90795,
+    "modelPath": "C:\\models\\crack_005.glb",
+    "description": "近期扩展裂缝，需要重点关注",
+    "createdAt": "2026-01-30T08:20:00.000Z"
+  },
+  {
+    "id": "1769760831727",
+    "name": "历史裂缝-006",
+    "longitude": 116.40015,
+    "latitude": 39.9113,
+    "modelPath": "C:\\models\\crack_006.glb",
+    "description": "历史遗留裂缝，状态稳定",
+    "createdAt": "2026-01-30T08:25:00.000Z"
+  },
+  {
+    "id": "1769760831728",
+    "name": "新生裂缝-007",
+    "longitude": 116.39456,
+    "latitude": 39.90684,
+    "modelPath": "C:\\models\\crack_007.glb",
+    "description": "新生裂缝，发展迅速",
+    "createdAt": "2026-01-30T08:30:00.000Z"
+  },
+  {
+    "id": "1769760831729",
+    "name": "网状裂缝-008",
+    "longitude": 116.40123,
+    "latitude": 39.91215,
+    "modelPath": "C:\\models\\crack_008.glb",
+    "description": "网状分布，多个分支",
+    "createdAt": "2026-01-30T08:35:00.000Z"
+  },
+  {
+    "id": "1769760831730",
+    "name": "纵向裂缝-009",
+    "longitude": 116.39387,
+    "latitude": 39.90592,
+    "modelPath": "C:\\models\\crack_009.glb",
+    "description": "纵向延伸，深度约15cm",
+    "createdAt": "2026-01-30T08:40:00.000Z"
+  },
+  {
+    "id": "1769760831731",
+    "name": "横向裂缝-010",
+    "longitude": 116.40234,
+    "latitude": 39.91328,
+    "modelPath": "C:\\models\\crack_010.glb",
+    "description": "横向裂缝，宽度均匀",
+    "createdAt": "2026-01-30T08:45:00.000Z"
+  },
+  {
+    "id": "1769760831732",
+    "name": "角部裂缝-011",
+    "longitude": 116.39245,
+    "latitude": 39.90456,
+    "modelPath": "C:\\models\\crack_011.glb",
+    "description": "建筑物角部应力裂缝",
+    "createdAt": "2026-01-30T08:50:00.000Z"
+  },
+  {
+    "id": "1769760831733",
+    "name": "温度裂缝-012",
+    "longitude": 116.40312,
+    "latitude": 39.91417,
+    "modelPath": "C:\\models\\crack_012.glb",
+    "description": "温度变化引起的收缩裂缝",
+    "createdAt": "2026-01-30T08:55:00.000Z"
+  },
+  {
+    "id": "1769760831734",
+    "name": "沉降裂缝-013",
+    "longitude": 116.39178,
+    "latitude": 39.90324,
+    "modelPath": "C:\\models\\crack_013.glb",
+    "description": "不均匀沉降导致的裂缝",
+    "createdAt": "2026-01-30T09:00:00.000Z"
+  },
+  {
+    "id": "1769760831735",
+    "name": "结构裂缝-014",
+    "longitude": 116.40456,
+    "latitude": 39.91543,
+    "modelPath": "C:\\models\\crack_014.glb",
+    "description": "结构受力裂缝，需加固",
+    "createdAt": "2026-01-30T09:05:00.000Z"
+  },
+  {
+    "id": "1769760831736",
+    "name": "表面龟裂-015",
+    "longitude": 116.39092,
+    "latitude": 39.90215,
+    "modelPath": "C:\\models\\crack_015.glb",
+    "description": "表面龟裂，多方向分布",
+    "createdAt": "2026-01-30T09:10:00.000Z"
+  },
+  {
+    "id": "1769760831737",
+    "name": "深层裂缝-016",
+    "longitude": 116.40578,
+    "latitude": 39.91672,
+    "modelPath": "C:\\models\\crack_016.glb",
+    "description": "深层裂缝，影响结构安全",
+    "createdAt": "2026-01-30T09:15:00.000Z"
+  },
+  {
+    "id": "1769760831738",
+    "name": "施工裂缝-017",
+    "longitude": 116.38963,
+    "latitude": 39.90098,
+    "modelPath": "C:\\models\\crack_017.glb",
+    "description": "施工期间形成的裂缝",
+    "createdAt": "2026-01-30T09:20:00.000Z"
+  },
+  {
+    "id": "1769760831739",
+    "name": "疲劳裂缝-018",
+    "longitude": 116.40694,
+    "latitude": 39.91785,
+    "modelPath": "C:\\Users\\16202\\Desktop\\DesktopFiles\\electron\\Amapp\\crack_model\\crack_model.glb",
+    "description": "材料疲劳产生的裂缝",
+    "createdAt": "2026-01-30T09:25:00.000Z"
+  },
+  {
+    "id": "1769760831740",
+    "name": "冻融裂缝-019",
+    "longitude": 116.38827,
+    "latitude": 39.89962,
+    "modelPath": "C:\\Users\\16202\\Desktop\\DesktopFiles\\electron\\Amapp\\crack_model\\crack_model.glb",
+    "description": "冻融循环造成的裂缝",
+    "createdAt": "2026-01-30T09:30:00.000Z"
+  },
+  {
+    "id": "1769760831741",
+    "name": "综合裂缝-020",
+    "longitude": 116.40765,
+    "latitude": 39.91896,
+    "modelPath": "C:\\models\\crack_020.glb",
+    "description": "多种因素综合作用裂缝",
+    "createdAt": "2026-01-30T09:35:00.000Z"
+  },
+  {
+    "id": "1769766723678",
+    "name": "1",
+    "longitude": 1,
+    "latitude": 1,
+    "modelPath": "C:\\Users\\16202\\Desktop\\道路信息注册\\crack_model.glb",
+    "description": "",
+    "createdAt": "2026-01-30T09:52:03.678Z"
+  },
+  {
+    "id": "1769767402195",
+    "name": "1",
+    "longitude": 1,
+    "latitude": 2,
+    "modelPath": "C:\\Users\\16202\\Desktop\\DesktopFiles\\electron\\Amapp\\crack_model\\crack_model.glb",
+    "description": "无",
+    "createdAt": "2026-01-30T10:03:22.195Z"
+  },
+  {
+    "id": "1769828566382",
+    "name": "1",
+    "longitude": 2,
+    "latitude": 3,
+    "modelPath": "C:\\Users\\lizhichong\\Desktop\\DesktopFiles\\Amapp\\crack_model\\crack_model.glb",
+    "description": "",
+    "createdAt": "2026-01-31T03:02:46.382Z"
+  },
+  {
+    "id": "1769828976439",
+    "name": "2",
+    "longitude": 116.4,
+    "latitude": 40,
+    "modelPath": "C:\\Users\\lizhichong\\Desktop\\DesktopFiles\\Amapp\\crack_model\\crack_model.obj",
+    "description": "",
+    "createdAt": "2026-01-31T03:09:36.439Z"
+  }
+]

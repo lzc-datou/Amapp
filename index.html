@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道路裂缝信息管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 顶部控制栏 -->
+        <div id="control-panel">
+            <h2>道路裂缝信息管理系统</h2>
+            <div class="button-group">
+                <button id="add-marker-btn" class="btn btn-primary">添加裂缝标记</button>
+                <button id="view-all-btn" class="btn btn-secondary">查看所有裂缝</button>
+                <button id="export-data-btn" class="btn btn-success">导出数据</button>
+            </div>
+        </div>
+
+        <!-- 地图容器 -->
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+
+        <!-- 添加裂缝标记的模态框 -->
+        <div id="add-marker-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>添加裂缝标记</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="crack-form">
+                        <div class="form-group">
+                            <label for="crack-name">裂缝名称:</label>
+                            <input type="text" id="crack-name" placeholder="请输入裂缝名称" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">经度:</label>
+                            <input type="number" id="longitude" step="0.000001" placeholder="请输入经度" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude">纬度:</label>
+                            <input type="number" id="latitude" step="0.000001" placeholder="请输入纬度" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="model-path">3D模型路径:</label>
+                            <div class="file-input-group">
+                                <input type="text" id="model-path" placeholder="选择GLB/OBJ模型文件" readonly>
+                                <button type="button" id="browse-btn" class="btn btn-outline">浏览</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="crack-description">裂缝描述:</label>
+                            <textarea id="crack-description" placeholder="请输入裂缝描述信息"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">保存</button>
+                            <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 裂缝列表模态框 - 简化版本 -->
+        <div id="crack-list-modal" class="modal">
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h3>所有裂缝信息</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <!-- 表格容器，添加滚动条 -->
+                    <div id="crack-table-container">
+                        <table id="crack-table">
+                            <thead>
+                                <tr>
+                                    <th width="20%">名称</th>
+                                    <th width="15%">经度</th>
+                                    <th width="15%">纬度</th>
+                                    <th width="30%">模型路径</th>
+                                    <th width="20%">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crack-table-body">
+                                <!-- 动态填充裂缝数据 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 高德地图安全配置 -->
+        <script type="text/javascript">
+            window._AMapSecurityConfig = {
+                securityJsCode: "303faf2f4f1f1dd1cb2a4b173e2b2a7f",
+            };
+        </script>
+        <script src="https://webapi.amap.com/loader.js"></script>
+        <script src="renderer.js"></script>
+    </div>
+</body>
+</html>

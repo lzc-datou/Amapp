@@ -1,0 +1,11 @@
+{
+  "name": "amapp",
+  "version": "1.0.0",
+  "description": "高德开发平台灌缝系统",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "lizhichong",
+  "license": "ISC"
+}
