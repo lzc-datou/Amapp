@@ -1,42 +1,9 @@
 import sys
 import os
-
-def setup_encoding():
-    """设置控制台编码"""
-    try:
-        # 尝试设置UTF-8编码
-        if sys.platform == 'win32':
-            import ctypes
-            ctypes.windll.kernel32.SetConsoleOutputCP(65001)
-    except:
-        pass
-
-def check_dependencies():
-    """检查依赖 - 使用纯ASCII字符"""
-    try:
-        import open3d as o3d
-        print("[OK] Open3D", o3d.__version__, "installed")
-    except ImportError:
-        print("[ERROR] Open3D not installed")
-        return False
-    
-    try:
-        import trimesh
-        print("[OK] trimesh installed")
-    except ImportError:
-        print("[INFO] trimesh not installed")
-    
-    try:
-        import numpy as np
-        print("[OK] numpy installed")
-    except ImportError:
-        print("[ERROR] numpy not installed")
-        return False
-    
-    return True
+import time
 
 def view_model(model_path):
-    """查看3D模型 - 增强光照版本"""
+    """查看3D模型 - 极速加载与智能着色版"""
     if not os.path.exists(model_path):
         print("Error: File not found -", model_path)
         return False
@@ -44,105 +11,78 @@ def view_model(model_path):
     try:
         import open3d as o3d
         import numpy as np
+        import time
         
         file_ext = os.path.splitext(model_path)[1].lower()
-        print("Loading file:", model_path, "Format:", file_ext)
+        print(f"Loading file: {model_path} (Format: {file_ext})")
         
-        mesh = None
+        start_time = time.time()
         
-        if file_ext == '.glb':
-            # 优先使用trimesh处理GLB
-            try:
-                import trimesh
-                tri_mesh = trimesh.load(model_path)
-                
-                if isinstance(tri_mesh, trimesh.Scene) and tri_mesh.geometry:
-                    tri_mesh = list(tri_mesh.geometry.values())[0]
-                
-                vertices = tri_mesh.vertices
-                faces = tri_mesh.faces
-                
-                mesh = o3d.geometry.TriangleMesh()
-                mesh.vertices = o3d.utility.Vector3dVector(vertices)
-                mesh.triangles = o3d.utility.Vector3iVector(faces)
-                
-                # 颜色处理保持不变
-                if hasattr(tri_mesh.visual, 'vertex_colors') and tri_mesh.visual.vertex_colors is not None:
-                    vertex_colors = tri_mesh.visual.vertex_colors
-                    
-                    if vertex_colors.max() > 1.0:
-                        vertex_colors = vertex_colors.astype(np.float32) / 255.0
-                    
-                    if vertex_colors.shape[1] >= 3:
-                        mesh.vertex_colors = o3d.utility.Vector3dVector(vertex_colors[:, :3])
-                
-                print("[OK] GLB loaded")
-                
-            except Exception as e:
-                print("trimesh failed, using direct open3d:", str(e))
-                mesh = o3d.io.read_triangle_mesh(model_path)
-        else:
-            mesh = o3d.io.read_triangle_mesh(model_path)
+        # 1. 极速读取模型
+        mesh = o3d.io.read_triangle_mesh(model_path, enable_post_processing=True)
         
         if not mesh or not mesh.has_vertices():
             print("Error: No valid mesh data")
             return False
+            
+        print(f"[OK] Model loaded in {time.time() - start_time:.2f} s")
         
-        # 准备显示
+        # 2. 自动降采样 (防止模型过大卡顿)
+        MAX_TRIANGLES = 2000000
+        if len(mesh.triangles) > MAX_TRIANGLES:
+            print(f"[INFO] Simplifying to {MAX_TRIANGLES} triangles...")
+            mesh = mesh.simplify_quadric_decimation(target_number_of_triangles=MAX_TRIANGLES)
+
+        # 3. 计算法线 (智能着色的基础)
         mesh.compute_vertex_normals()
-        if not mesh.has_vertex_colors():
-            mesh.paint_uniform_color([0.8, 0.8, 0.8])  # 使用更亮的灰色
         
-        print("Vertices:", len(mesh.vertices), "Triangles:", len(mesh.triangles))
-        print("Opening 3D viewer with enhanced lighting...")
+        # =======================================================
+        # 4. 核心优化：基于法线的智能着色 (沥青路面 vs 裂缝)
+        # =======================================================
+        print("[INFO] Applying smart coloring (Asphalt + Crack Highlight)...")
         
-        # 方法1：使用自定义可视化选项增强光照
+        # 获取所有顶点的法线向量
+        normals = np.asarray(mesh.vertex_normals)
+        
+        # 初始化顶点颜色数组 (默认为沥青深灰色)
+        colors = np.zeros_like(normals)
+        
+        # 设定颜色
+        ASPHALT_COLOR = [0.25, 0.25, 0.27]  # 沥青马路色 (深灰略带一点蓝)
+        CRACK_COLOR = [0.9, 0.15, 0.15]     # 裂缝高亮色 (醒目的红色)
+        
+        # 算法思路：假设 Z 轴向上 (如果是 Y 轴向上，把 normals[:, 2] 改为 normals[:, 1])
+        # 平坦路面的法线大体上是指向正上方的，所以 Z 分量接近 1 或 -1
+        # 我们取法线 Z 分量的绝对值，大于 0.85 认为是平坦路面，否则认为是裂缝边缘
+        upward_normals = np.abs(normals[:, 2]) 
+        
+        # 创建遮罩 (Mask)
+        flat_mask = upward_normals > 0.85
+        
+        # 填充颜色
+        colors[flat_mask] = ASPHALT_COLOR
+        colors[~flat_mask] = CRACK_COLOR
+        
+        # 将颜色应用回模型
+        mesh.vertex_colors = o3d.utility.Vector3dVector(colors)
+        # =======================================================
+
+        print("Opening 3D viewer...")
+        
+        # 5. 可视化窗口设置
         vis = o3d.visualization.Visualizer()
         vis.create_window(
-            window_name="道路裂缝3D模型 - 增强光照",
-            width=1024,
-            height=768
+            window_name="道路裂缝3D模型 - 智能缺陷识别视角",
+            width=1200,
+            height=800
         )
-        
-        # 添加网格
         vis.add_geometry(mesh)
         
-        # 获取渲染选项
+        # 6. 增强光照与渲染设置
         render_option = vis.get_render_option()
-        
-        # 增强光照设置
-        render_option.background_color = np.array([0.9, 0.9, 0.9])  # 更亮的背景
+        render_option.background_color = np.array([0.95, 0.95, 0.95])  # 浅灰背景，突出模型
         render_option.light_on = True
-        
-        # 启用光照计算
         render_option.mesh_show_back_face = False
-        
-        # 设置点光源
-        render_option.point_size = 3.0
-        
-        # 设置光照强度
-        # Open3D 0.19.0+ 版本可能需要使用以下方式
-        try:
-            # 设置环境光强度
-            render_option.ambient_light = np.array([0.7, 0.7, 0.7])  # 增强环境光
-            
-            # 设置漫反射强度
-            render_option.diffuse_reflection = 0.9
-            
-            # 设置镜面反射
-            render_option.specular_reflection = 0.3
-            
-            # 设置光照颜色
-            render_option.light_color = np.array([1.0, 1.0, 1.0])  # 白色光
-            
-        except AttributeError:
-            print("Note: Some lighting options not available in this Open3D version")
-        
-        # 设置相机视角
-        ctr = vis.get_view_control()
-        
-        # 方法2：使用draw_geometries_with_custom_animation
-        print("Starting visualization...")
         
         # 运行可视化
         vis.run()
@@ -156,21 +96,16 @@ def view_model(model_path):
         return False
 
 if __name__ == "__main__":
-    # setup_encoding()
-    
-    if not check_dependencies():
-        sys.exit(1)
-    
+    # 强制控制台输出 UTF-8 以防乱码
+    if sys.platform == 'win32':
+        import ctypes
+        ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+
     if len(sys.argv) != 2:
         print("Usage: python model_viewer.py <model_path>")
         sys.exit(1)
     
     model_path = sys.argv[1]
-    
-    # 验证文件存在
-    if not os.path.exists(model_path):
-        print("Error: File does not exist -", model_path)
-        sys.exit(1)
     
     success = view_model(model_path)
     sys.exit(0 if success else 1)

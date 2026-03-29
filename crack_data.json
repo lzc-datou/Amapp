@@ -162,15 +162,6 @@
     "createdAt": "2026-01-30T09:30:00.000Z"
   },
   {
-    "id": "1769760831741",
-    "name": "综合裂缝-020",
-    "longitude": 116.40765,
-    "latitude": 39.91896,
-    "modelPath": "C:\\models\\crack_020.glb",
-    "description": "多种因素综合作用裂缝",
-    "createdAt": "2026-01-30T09:35:00.000Z"
-  },
-  {
     "id": "1769766723678",
     "name": "1",
     "longitude": 1,
@@ -189,15 +180,6 @@
     "createdAt": "2026-01-30T10:03:22.195Z"
   },
   {
-    "id": "1769828566382",
-    "name": "1",
-    "longitude": 2,
-    "latitude": 3,
-    "modelPath": "C:\\Users\\lizhichong\\Desktop\\DesktopFiles\\Amapp\\crack_model\\crack_model.glb",
-    "description": "",
-    "createdAt": "2026-01-31T03:02:46.382Z"
-  },
-  {
     "id": "1769828976439",
     "name": "2",
     "longitude": 116.4,
@@ -207,12 +189,21 @@
     "createdAt": "2026-01-31T03:09:36.439Z"
   },
   {
-    "id": "1769831940209",
+    "id": "1774801027948",
     "name": "1",
     "longitude": 1,
     "latitude": 1,
-    "modelPath": "C:\\Users\\lizhichong\\Desktop\\DesktopFiles\\Amapp\\crack_model\\crack_model.obj",
-    "description": "",
-    "createdAt": "2026-01-31T03:59:00.209Z"
+    "modelPath": "C:\\Users\\16202\\Desktop\\DesktopFiles\\electron\\Amapp\\crack_model\\crack_model.obj",
+    "description": "1",
+    "createdAt": "2026-03-29T16:17:07.948Z"
+  },
+  {
+    "id": "1774801324382",
+    "name": "2",
+    "longitude": 1,
+    "latitude": 1,
+    "modelPath": "C:\\Users\\16202\\Desktop\\DesktopFiles\\electron\\Amapp\\crack_model\\crack_model.obj",
+    "description": "2",
+    "createdAt": "2026-03-29T16:22:04.382Z"
   }
 ]

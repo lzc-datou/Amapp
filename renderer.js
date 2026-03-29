@@ -174,6 +174,23 @@ class CrackMapApp {
                 e.target.style.display = 'none';
             }
         });
+        const searchInput = document.getElementById('search-crack-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const keyword = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#crack-table-body tr');
+                
+                rows.forEach(row => {
+                    const name = row.cells[0].textContent.toLowerCase();
+                    // 这里假设你有把描述信息存入 data 属性或想要搜索其它列，目前基于名称搜索
+                    if (name.includes(keyword)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
     }
 
     // 显示添加标记模态框
@@ -369,6 +386,10 @@ class CrackMapApp {
                         }
                         
                         this.showMessage('裂缝标记删除成功！', 'success');
+                        this.updateCrackTable();
+                        if (this.markers.length > 0) {
+                            this.map.setFitView();
+                        }
                     } else {
                         throw new Error(result.error);
                     }
@@ -382,6 +403,7 @@ class CrackMapApp {
     }
 
     // 加载裂缝数据 - 使用预加载API
+// 修改 loadCrackData 方法，让地图加载完数据后自动缩放到能看见所有裂缝的视角
     async loadCrackData() {
         try {
             if (window.electronAPI && window.electronAPI.getAllCracks) {
@@ -389,9 +411,15 @@ class CrackMapApp {
                 cracks.forEach(crack => {
                     this.addMarkerToMap(crack);
                 });
+                
+                // 【新增逻辑】如果地图上有标记，自动调整视角以包含所有标记
+                if (this.markers.length > 0 && this.map) {
+                    this.map.setFitView();
+                }
             }
         } catch (error) {
             console.error('加载裂缝数据失败:', error);
+            this.showMessage('加载已有裂缝数据失败', 'error');
         }
     }
 
@@ -457,14 +485,26 @@ class CrackMapApp {
 
     // 修改showMessage方法，提供更好的错误显示
     showMessage(message, type = 'info') {
-        // 对于错误消息，使用dialog模块显示
-        if (type === 'error') {
-            const { dialog } = require('electron').remote || require('@electron/remote');
-            dialog.showErrorBox('错误', message);
-        } else {
-            // 对于非错误消息，可以使用简单的alert或自定义通知
-            alert(`${type.toUpperCase()}: ${message}`);
-        }
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        // 添加图标前缀
+        const icons = { success: '✅ ', error: '❌ ', info: 'ℹ️ ', warning: '⚠️ ' };
+        toast.innerText = (icons[type] || '') + message;
+
+        container.appendChild(toast);
+
+        // 触发动画
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // 3秒后自动移除
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300); // 等待淡出动画结束
+        }, 3000);
     }
 }
 

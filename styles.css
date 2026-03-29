@@ -365,3 +365,52 @@ body {
         font-size: 11px;
     }
 }
+/* ================= 现代化 Toast 提示框样式 ================= */
+/* ================= 现代化 Toast 提示框样式 (顶部居中版) ================= */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%; /* 移到屏幕水平中间 */
+    transform: translateX(-50%); /* 确保绝对居中对齐 */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center; /* 让多个提示框堆叠时也保持居中 */
+    pointer-events: none; /* 防止容器本身的透明区域阻挡鼠标点击事件 */
+}
+
+.toast {
+    min-width: 250px;
+    padding: 12px 20px;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    pointer-events: auto; /* 恢复提示框本身的鼠标响应 */
+    
+    /* 动画改为从正上方往下降落，而不是从右侧滑入 */
+    transform: translateY(-30px) scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast.show {
+    transform: translateY(0) scale(1); /* 恢复到正常位置和大小 */
+    opacity: 1;
+}
+
+/* 后面的颜色样式保持不变 */
+.toast.info { background: #3498db; }
+.toast.success { background: #2ecc71; }
+.toast.error { background: #e74c3c; }
+.toast.warning { background: #f1c40f; color: #333; }
+
+/* 搜索栏聚焦特效 */
+#search-crack-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
