@@ -4,6 +4,22 @@ class CrackMapApp {
         this.map = null;
         this.markers = [];
         this.currentInfoWindow = null;
+        this.confirmCallback = null;
+        
+        // 配置信息（实际应用中应通过 IPC 从主进程获取）
+        this.config = {
+            amap: {
+                key: '49da9c37724f9fb6fb9572169e1abb5d',
+                securityCode: '303faf2f4f1f1dd1cb2a4b173e2b2a7f'
+            },
+            map: {
+                center: [116.397428, 39.90923],
+                zoom: 13,
+                viewMode: '3D',
+                pitch: 0
+            }
+        };
+        
         this.init();
     }
 
@@ -24,12 +40,12 @@ class CrackMapApp {
 
             // 设置安全配置
             window._AMapSecurityConfig = {
-                securityJsCode: "303faf2f4f1f1dd1cb2a4b173e2b2a7f",
+                securityJsCode: this.config.amap.securityCode,
             };
 
             // 加载高德地图API
             window.AMapLoader.load({
-                key: "49da9c37724f9fb6fb9572169e1abb5d",
+                key: this.config.amap.key,
                 version: "2.0",
                 plugins: ['AMap.ControlBar', 'AMap.ToolBar', 'AMap.Scale']
             }).then((AMap) => {
@@ -48,10 +64,10 @@ class CrackMapApp {
     initMap(AMap) {
         try {
             this.map = new AMap.Map('map', {
-                viewMode: '3D',
-                zoom: 13,
-                center: [116.397428, 39.90923],
-                pitch: 0,
+                viewMode: this.config.map.viewMode,
+                zoom: this.config.map.zoom,
+                center: this.config.map.center,
+                pitch: this.config.map.pitch,
                 rotateEnable: true,
                 pitchEnable: true
             });
@@ -168,6 +184,23 @@ class CrackMapApp {
             this.hideModal('add-marker-modal');
         });
 
+        // 确认对话框按钮
+        document.getElementById('confirm-yes').addEventListener('click', () => {
+            if (this.confirmCallback) {
+                this.confirmCallback(true);
+                this.confirmCallback = null;
+            }
+            this.hideModal('confirm-modal');
+        });
+
+        document.getElementById('confirm-no').addEventListener('click', () => {
+            if (this.confirmCallback) {
+                this.confirmCallback(false);
+                this.confirmCallback = null;
+            }
+            this.hideModal('confirm-modal');
+        });
+
         // 点击模态框外部关闭
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
@@ -217,6 +250,23 @@ class CrackMapApp {
         if (modal) {
             modal.style.display = 'none';
         }
+    }
+
+    // 自定义确认对话框
+    confirm(message) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('confirm-modal');
+            const messageEl = document.getElementById('confirm-message');
+            
+            if (messageEl) {
+                messageEl.textContent = message;
+            }
+            
+            if (modal) {
+                modal.style.display = 'block';
+                this.confirmCallback = resolve;
+            }
+        });
     }
 
     // 保存裂缝标记 - 使用预加载API
@@ -366,39 +416,42 @@ class CrackMapApp {
 
     // 删除裂缝 - 使用预加载API
     async deleteCrack(crackId) {
-        if (confirm('确定要删除这个裂缝标记吗？')) {
-            try {
-                if (window.electronAPI && window.electronAPI.deleteCrack) {
-                    const result = await window.electronAPI.deleteCrack(crackId);
+        const confirmed = await this.confirm('确定要删除这个裂缝标记吗？');
+        if (!confirmed) {
+            return;
+        }
+        
+        try {
+            if (window.electronAPI && window.electronAPI.deleteCrack) {
+                const result = await window.electronAPI.deleteCrack(crackId);
+                
+                if (result.success) {
+                    // 从地图移除标记
+                    const index = this.markers.findIndex(m => m.data.id === crackId);
+                    if (index !== -1) {
+                        this.map.remove(this.markers[index].marker);
+                        this.markers.splice(index, 1);
+                    }
                     
-                    if (result.success) {
-                        // 从地图移除标记
-                        const index = this.markers.findIndex(m => m.data.id === crackId);
-                        if (index !== -1) {
-                            this.map.remove(this.markers[index].marker);
-                            this.markers.splice(index, 1);
-                        }
-                        
-                        // 关闭信息窗口
-                        if (this.currentInfoWindow) {
-                            this.map.remove(this.currentInfoWindow);
-                            this.currentInfoWindow = null;
-                        }
-                        
-                        this.showMessage('裂缝标记删除成功！', 'success');
-                        this.updateCrackTable();
-                        if (this.markers.length > 0) {
-                            this.map.setFitView();
-                        }
-                    } else {
-                        throw new Error(result.error);
+                    // 关闭信息窗口
+                    if (this.currentInfoWindow) {
+                        this.map.remove(this.currentInfoWindow);
+                        this.currentInfoWindow = null;
+                    }
+                    
+                    this.showMessage('裂缝标记删除成功！', 'success');
+                    this.updateCrackTable();
+                    if (this.markers.length > 0) {
+                        this.map.setFitView();
                     }
                 } else {
-                    throw new Error('API不可用');
+                    throw new Error(result.error);
                 }
-            } catch (error) {
-                this.showMessage(`删除失败: ${error.message}`, 'error');
+            } else {
+                throw new Error('API不可用');
             }
+        } catch (error) {
+            this.showMessage(`删除失败: ${error.message}`, 'error');
         }
     }
 
@@ -448,11 +501,6 @@ class CrackMapApp {
         } catch (error) {
             console.error('更新表格失败:', error);
         }
-    }
-
-    // 截断路径显示
-    truncatePath(path, maxLength = 30) {
-        return path.length > maxLength ? path.substring(0, maxLength) + '...' : path;
     }
 
     // 导出数据 - 使用预加载API

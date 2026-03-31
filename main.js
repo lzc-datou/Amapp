@@ -2,9 +2,10 @@ const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fsp = require('fs').promises;
 const fs = require('fs');
+const config = require('./config');
 
 // 裂缝数据存储文件路径
-const DATA_FILE_PATH = path.join(__dirname, 'crack_data.json');
+const DATA_FILE_PATH = path.join(__dirname, config.dataPath.crackData);
 
 class CrackManager {
     constructor() {
@@ -31,14 +32,34 @@ class CrackManager {
         await fsp.writeFile(DATA_FILE_PATH, JSON.stringify(cracksArray, null, 2));  // 使用 fsp
     }
 
+    // 验证坐标有效性
+    validateCoordinates(longitude, latitude) {
+        const validLon = longitude >= -180 && longitude <= 180;
+        const validLat = latitude >= -90 && latitude <= 90;
+        return {
+            isValid: validLon && validLat,
+            error: !validLon ? '经度范围应在 -180 到 180 之间' : 
+                  !validLat ? '纬度范围应在 -90 到 90 之间' : ''
+        };
+    }
+
     // 添加裂缝
     async addCrack(crackData) {
+        // 验证坐标
+        const longitude = parseFloat(crackData.longitude);
+        const latitude = parseFloat(crackData.latitude);
+        
+        const validation = this.validateCoordinates(longitude, latitude);
+        if (!validation.isValid) {
+            throw new Error(validation.error);
+        }
+
         const id = Date.now().toString();
         const crack = {
             id,
-            name: crackData.name,
-            longitude: parseFloat(crackData.longitude),
-            latitude: parseFloat(crackData.latitude),
+            name: crackData.name.trim(),
+            longitude,
+            latitude,
             modelPath: crackData.modelPath,
             description: crackData.description || '',
             createdAt: new Date().toISOString()
@@ -67,17 +88,24 @@ class CrackManager {
 }
 
 function createWindow() {
+    const iconPath = path.join(__dirname, config.dataPath.icon);
+    const iconExists = fs.existsSync(iconPath);
+    
     mainWindow = new BrowserWindow({
-        width: 1200,
-        height: 800,
+        width: config.app.width,
+        height: config.app.height,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js')
         },
-        icon: path.join(__dirname, 'assets/icon.png'), // 可选：应用图标
-        title: '道路裂缝信息管理系统'
+        icon: iconExists ? iconPath : undefined,
+        title: config.app.title
     });
+
+    if (!iconExists) {
+        console.warn('应用图标未找到，使用默认图标');
+    }
 
     mainWindow.loadFile('index.html');
 
@@ -157,7 +185,7 @@ ipcMain.handle('open-model-viewer', async (event, modelPath) => {
         }
 
         // 验证文件格式
-        const supportedFormats = ['.glb', '.obj', '.stl', '.ply'];
+        const supportedFormats = config.model.supportedFormats;
         const fileExt = path.extname(modelPath).toLowerCase();
         if (!supportedFormats.includes(fileExt)) {
             return { 
@@ -167,66 +195,79 @@ ipcMain.handle('open-model-viewer', async (event, modelPath) => {
         }
 
         const { spawn } = require('child_process');
-        const pythonScript = path.join(__dirname, 'script/model_viewer.py');
+        const pythonScript = path.join(__dirname, config.dataPath.pythonScript);
         
         return new Promise((resolve) => {
-            const pythonProcess = spawn('python', [pythonScript, modelPath], {
-                cwd: __dirname,
-                windowsHide: false,
-                stdio: ['pipe', 'pipe', 'pipe']
-            });
-
-            let output = '';
-            let errorOutput = '';
-
-            pythonProcess.stdout.on('data', (data) => {
-                const text = data.toString();
-                output += text;
-                console.log('Python output:\n', text.trim());
-            });
-
-            pythonProcess.stderr.on('data', (data) => {
-                const text = data.toString();
-                errorOutput += text;
-                console.error('Python error:', text.trim());
-            });
-
-            pythonProcess.on('close', (code) => {
-                console.log('Python Process exit code:', code);
-                
-                if (code === 0) {
-                    resolve({ success: true });
-                } else {
-                    resolve({ 
-                        success: false, 
-                        error: `模型查看器异常退出 (代码: ${code})`,
-                        details: errorOutput || output
-                    });
-                }
-            });
-
-            // 添加进程错误处理
-            pythonProcess.on('error', (error) => {
-                console.error('Python Process startup failed:', error);
-                resolve({ 
-                    success: false, 
-                    error: `Cannot  start python process: ${error.message}` 
+            // 尝试多种 Python 命令
+            const pythonCommands = ['python', 'python3', 'py'];
+            let attemptedCommands = 0;
+            
+            const trySpawn = (command) => {
+                const pythonProcess = spawn(command, [pythonScript, modelPath], {
+                    cwd: __dirname,
+                    windowsHide: false,
+                    stdio: ['pipe', 'pipe', 'pipe']
                 });
-            });
 
-            // 添加超时处理
-            const timeout = setTimeout(() => {
-                if (pythonProcess.exitCode === null) {
-                    console.log('Python进程超时，仍在运行');
-                    // 可以选择终止进程
-                    // pythonProcess.kill();
-                }
-            }, 10000); // 10秒超时
+                let output = '';
+                let errorOutput = '';
 
-            pythonProcess.on('close', () => {
-                clearTimeout(timeout);
-            });
+                pythonProcess.stdout.on('data', (data) => {
+                    const text = data.toString();
+                    output += text;
+                    console.log('Python output:\n', text.trim());
+                });
 
+                pythonProcess.stderr.on('data', (data) => {
+                    const text = data.toString();
+                    errorOutput += text;
+                    console.error('Python error:', text.trim());
+                });
+
+                pythonProcess.on('close', (code) => {
+                    console.log('Python Process exit code:', code);
+                    
+                    if (code === 0) {
+                        resolve({ success: true });
+                    } else {
+                        resolve({ 
+                            success: false, 
+                            error: `模型查看器异常退出 (代码: ${code})`,
+                            details: errorOutput || output
+                        });
+                    }
+                });
+
+                // 添加进程错误处理
+                pythonProcess.on('error', (error) => {
+                    attemptedCommands++;
+                    console.error(`Python Process startup failed with ${command}:`, error.message);
+                    
+                    // 尝试下一个命令
+                    if (attemptedCommands < pythonCommands.length) {
+                        trySpawn(pythonCommands[attemptedCommands]);
+                    } else {
+                        resolve({ 
+                            success: false, 
+                            error: `未找到 Python 环境。请确保已安装 Python 并配置环境变量。` 
+                        });
+                    }
+                });
+
+                // 添加超时处理
+                const timeout = setTimeout(() => {
+                    if (pythonProcess.exitCode === null) {
+                        console.log('Python进程超时，仍在运行');
+                    }
+                }, config.model.pythonTimeout);
+
+                pythonProcess.on('close', () => {
+                    clearTimeout(timeout);
+                });
+            };
+
+            // 开始尝试第一个命令
+            trySpawn(pythonCommands[0]);
         });
         
     } catch (error) {

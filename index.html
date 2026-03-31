@@ -24,6 +24,24 @@
         </div>
         <div id="toast-container"></div>
 
+        <!-- 自定义确认对话框 -->
+        <div id="confirm-modal" class="modal">
+            <div class="modal-content" style="width: 400px;">
+                <div class="modal-header">
+                    <h3>确认操作</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-message">确定要执行此操作吗？</p>
+                    <div class="form-actions">
+                        <button id="confirm-yes" class="btn btn-primary">确定</button>
+                        <button id="confirm-no" class="btn btn-secondary">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 裂缝列表模态框 -->
         <div id="crack-list-modal" class="modal">
             <div class="modal-content large">
                 <div class="modal-header">
@@ -34,6 +52,7 @@
                     <div class="search-bar" style="margin-bottom: 15px; display: flex; gap: 10px;">
                         <input type="text" id="search-crack-input" placeholder="输入裂缝名称或描述搜索..." style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
                     </div>
+                    <!-- 表格容器，添加滚动条 -->
                     <div id="crack-table-container">
                         <table id="crack-table">
                             <thead>
@@ -46,7 +65,8 @@
                                 </tr>
                             </thead>
                             <tbody id="crack-table-body">
-                                </tbody>
+                                <!-- 动态填充裂缝数据 -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -90,35 +110,6 @@
                             <button type="button" class="btn btn-secondary" id="cancel-btn">取消</button>
                         </div>
                     </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- 裂缝列表模态框 - 简化版本 -->
-        <div id="crack-list-modal" class="modal">
-            <div class="modal-content large">
-                <div class="modal-header">
-                    <h3>所有裂缝信息</h3>
-                    <span class="close">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <!-- 表格容器，添加滚动条 -->
-                    <div id="crack-table-container">
-                        <table id="crack-table">
-                            <thead>
-                                <tr>
-                                    <th width="20%">名称</th>
-                                    <th width="15%">经度</th>
-                                    <th width="15%">纬度</th>
-                                    <th width="30%">模型路径</th>
-                                    <th width="20%">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="crack-table-body">
-                                <!-- 动态填充裂缝数据 -->
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>
